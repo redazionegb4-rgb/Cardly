@@ -1,5 +1,5 @@
 CARDLY — BUILD 1
-Versione 1.0 (Build 1)
+Versione 1.0 (Build 2)
 Target: iPhone / iOS 17+
 
 Come aprire:
@@ -31,3 +31,10 @@ Da completare nelle build successive:
 - riconoscimento automatico logo/negozio
 - editing tessera
 - importazione foto tessera
+
+
+Correzioni Build 2:
+- Bundle Identifier: com.cardlynew.app
+- CFBundleIdentifier aggiunto a Info.plist
+- CFBundleShortVersionString e CFBundleVersion aggiunti
+- Build number aggiornato a 2
