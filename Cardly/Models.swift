@@ -8,6 +8,7 @@ enum CardCategory: String, CaseIterable, Codable, Identifiable {
     case salute = "Salute"
     case sport = "Sport"
     case viaggi = "Viaggi"
+    case servizi = "Servizi"
     case altro = "Altro"
 
     var id: String { rawValue }
@@ -20,6 +21,7 @@ enum CardCategory: String, CaseIterable, Codable, Identifiable {
         case .salute: return "cross.case.fill"
         case .sport: return "figure.run"
         case .viaggi: return "airplane"
+        case .servizi: return "sparkles"
         case .altro: return "square.grid.2x2.fill"
         }
     }
@@ -28,7 +30,6 @@ enum CardCategory: String, CaseIterable, Codable, Identifiable {
 enum CodeKind: String, CaseIterable, Codable, Identifiable {
     case qr = "QR Code"
     case code128 = "Code 128"
-    case ean13 = "EAN-13"
 
     var id: String { rawValue }
 }
@@ -42,6 +43,7 @@ struct LoyaltyCard: Identifiable, Codable, Equatable {
     var codeKind: CodeKind
     var colorHex: String
     var isFavorite: Bool = false
+    var notes: String = ""
     var createdAt: Date = Date()
 }
 
@@ -50,14 +52,21 @@ extension Color {
         let cleaned = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var value: UInt64 = 0
         Scanner(string: cleaned).scanHexInt64(&value)
-        let r, g, b: UInt64
-        if cleaned.count == 6 {
-            r = (value >> 16) & 0xFF
-            g = (value >> 8) & 0xFF
-            b = value & 0xFF
-        } else {
-            r = 29; g = 78; b = 216
-        }
-        self.init(.sRGB, red: Double(r)/255, green: Double(g)/255, blue: Double(b)/255, opacity: 1)
+        let r = Double((value >> 16) & 0xFF) / 255
+        let g = Double((value >> 8) & 0xFF) / 255
+        let b = Double(value & 0xFF) / 255
+        self.init(.sRGB, red: r, green: g, blue: b, opacity: 1)
     }
+}
+
+extension LoyaltyCard {
+    static let preview = LoyaltyCard(
+        name: "Cardly Club",
+        subtitle: "Carta fedeltà",
+        number: "123456789012",
+        category: .shopping,
+        codeKind: .code128,
+        colorHex: "0F5BFF",
+        isFavorite: true
+    )
 }

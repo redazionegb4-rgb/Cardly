@@ -3,10 +3,10 @@ import Foundation
 @MainActor
 final class CardStore: ObservableObject {
     @Published var cards: [LoyaltyCard] = [] {
-        didSet { save() }
+        didSet { persist() }
     }
 
-    private let key = "cardly.cards.v1"
+    private let key = "cardly.cards.v2"
 
     init() {
         load()
@@ -14,6 +14,11 @@ final class CardStore: ObservableObject {
 
     func add(_ card: LoyaltyCard) {
         cards.insert(card, at: 0)
+    }
+
+    func update(_ card: LoyaltyCard) {
+        guard let index = cards.firstIndex(where: { $0.id == card.id }) else { return }
+        cards[index] = card
     }
 
     func delete(_ card: LoyaltyCard) {
@@ -25,7 +30,7 @@ final class CardStore: ObservableObject {
         cards[index].isFavorite.toggle()
     }
 
-    private func save() {
+    private func persist() {
         guard let data = try? JSONEncoder().encode(cards) else { return }
         UserDefaults.standard.set(data, forKey: key)
     }
@@ -33,8 +38,8 @@ final class CardStore: ObservableObject {
     private func load() {
         guard
             let data = UserDefaults.standard.data(forKey: key),
-            let saved = try? JSONDecoder().decode([LoyaltyCard].self, from: data)
+            let decoded = try? JSONDecoder().decode([LoyaltyCard].self, from: data)
         else { return }
-        cards = saved
+        cards = decoded
     }
 }

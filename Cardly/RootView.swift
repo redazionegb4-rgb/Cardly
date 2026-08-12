@@ -4,7 +4,7 @@ struct RootView: View {
     var body: some View {
         TabView {
             HomeView()
-                .tabItem { Label("Carte", systemImage: "wallet.pass.fill") }
+                .tabItem { Label("Wallet", systemImage: "wallet.pass.fill") }
 
             FavoritesView()
                 .tabItem { Label("Preferiti", systemImage: "star.fill") }
@@ -12,6 +12,6 @@ struct RootView: View {
             SettingsView()
                 .tabItem { Label("Impostazioni", systemImage: "gearshape.fill") }
         }
-        .tint(.blue)
+        .tint(CardlyTheme.blue)
     }
 }

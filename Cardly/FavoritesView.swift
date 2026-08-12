@@ -9,28 +9,29 @@ struct FavoritesView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
+            ZStack {
+                CardlyBackground()
+
                 if favorites.isEmpty {
                     ContentUnavailableView(
                         "Nessun preferito",
                         systemImage: "star",
-                        description: Text("Apri una tessera e aggiungila ai preferiti.")
+                        description: Text("Apri una tessera e tocca Preferiti.")
                     )
                 } else {
                     ScrollView {
-                        LazyVStack(spacing: 14) {
+                        LazyVStack(spacing: 15) {
                             ForEach(favorites) { card in
                                 NavigationLink {
                                     CardDetailView(cardID: card.id)
                                 } label: {
-                                    CardTile(card: card)
+                                    WalletCardView(card: card)
                                 }
                                 .buttonStyle(.plain)
                             }
                         }
                         .padding()
                     }
-                    .background(Color(.systemGroupedBackground))
                 }
             }
             .navigationTitle("Preferiti")

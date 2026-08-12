@@ -10,12 +10,13 @@ struct ScannerView: UIViewControllerRepresentable {
     }
 
     func makeUIViewController(context: Context) -> UIViewController {
-        guard DataScannerViewController.isSupported, DataScannerViewController.isAvailable else {
+        guard DataScannerViewController.isSupported,
+              DataScannerViewController.isAvailable else {
             return UIHostingController(rootView:
                 ContentUnavailableView(
                     "Scanner non disponibile",
                     systemImage: "camera.fill",
-                    description: Text("Puoi inserire il numero della tessera manualmente.")
+                    description: Text("Inserisci il numero della tessera manualmente.")
                 )
             )
         }
