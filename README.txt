@@ -38,3 +38,15 @@ Correzioni Build 2:
 - CFBundleIdentifier aggiunto a Info.plist
 - CFBundleShortVersionString e CFBundleVersion aggiunti
 - Build number aggiornato a 2
+
+
+CARDLY BUILD 3 - APP STORE FIX
+- Bundle ID: com.cardlynew.app
+- Versione: 1.0
+- Build: 3
+- Info.plist generato automaticamente da Xcode
+- Chiave fotocamera configurata nelle Build Settings
+- Configurazione Archive/App Store resa più standard
+
+Prima dell'Archive: TARGET Cardly > Signing & Capabilities > scegli il tuo Team.
+Poi Product > Clean Build Folder e Product > Archive.
