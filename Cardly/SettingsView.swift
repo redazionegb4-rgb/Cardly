@@ -79,7 +79,7 @@ struct SettingsView: View {
                 Divider()
                 infoRow("Salvataggio", "iphone", "Sul dispositivo")
                 Divider()
-                infoRow("Versione", "number", "2.0 (12)")
+                infoRow("Versione", "number", "2.0 (13)")
             }
         }
     }

@@ -45,3 +45,11 @@ BUILD 12
 - Nuova sezione Categorie
 - Barra sempre dentro la safe area
 - Impostazioni con maggiore margine inferiore
+
+
+BUILD 13 PROJECT FIX
+- project.pbxproj rigenerato completamente da zero
+- eliminato errore parse/damaged project
+- mantenuta barra a 5 elementi con + centrato
+- mantenuta sezione Categorie
+- mantenuti Cardly Labs
