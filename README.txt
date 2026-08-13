@@ -18,3 +18,9 @@ FIX BUILD 7
 FIX BUILD 7
 - Rimosso riferimento a PageBackground da LockGateView
 - Lock screen ora usa direttamente Color(.systemBackground)
+
+
+BUILD 8 FIX
+- Aggiunto CardlyTheme.cardColors mancante
+- Verificati i riferimenti usati da AddEditCardView
+- Mantenuto fix LockGateView senza PageBackground

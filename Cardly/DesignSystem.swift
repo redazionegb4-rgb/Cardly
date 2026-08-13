@@ -2,6 +2,10 @@ import SwiftUI
 
 enum CardlyTheme {
     static let accent = Color(red: 0.02, green: 0.42, blue: 0.98)
+    static let cardColors: [String] = [
+        "111827", "0F5BFF", "0F766E", "7C3AED",
+        "B42318", "A16207", "334155", "BE185D"
+    ]
     static let gradients: [[Color]] = [
         [.black, Color(red: 0.10, green: 0.11, blue: 0.14)],
         [Color(red: 0.02, green: 0.36, blue: 0.95), Color(red: 0.02, green: 0.18, blue: 0.52)],
