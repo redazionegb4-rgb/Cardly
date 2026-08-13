@@ -8,7 +8,11 @@ struct WalletView: View {
 
     private var cards: [LoyaltyCard] {
         store.cards.filter { card in
-            let s = search.isEmpty || card.title.localizedCaseInsensitiveContains(search) || card.code.localizedCaseInsensitiveContains(search)
+            let s = search.isEmpty ||
+                card.title.localizedCaseInsensitiveContains(search) ||
+                card.subtitle.localizedCaseInsensitiveContains(search) ||
+                card.code.localizedCaseInsensitiveContains(search)
+
             let c = selectedCategory == nil || card.category == selectedCategory
             return s && c
         }
@@ -20,8 +24,9 @@ struct WalletView: View {
                 DynamicBackdrop()
 
                 ScrollView {
-                    VStack(spacing: 22) {
+                    VStack(spacing: 18) {
                         header
+                        searchBar
                         quickActions
                         categories
 
@@ -32,53 +37,104 @@ struct WalletView: View {
                         }
                     }
                     .padding(.horizontal, 18)
-                    .padding(.bottom, 120)
+                    .padding(.top, 8)
+                    .padding(.bottom, 26)
                 }
                 .scrollIndicators(.hidden)
             }
             .toolbar(.hidden, for: .navigationBar)
-            .searchable(text: $search, prompt: "Cerca nel wallet")
         }
     }
 
     private var header: some View {
-        HStack {
+        HStack(alignment: .center, spacing: 14) {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Cardly")
                     .font(.system(size: 38, weight: .bold, design: .rounded))
+                    .lineLimit(1)
+
                 Text(store.cards.isEmpty ? "Il tuo wallet prende forma qui." : "\(store.cards.count) tessere nel wallet")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
+
             Spacer()
-            Circle()
-                .fill(.ultraThinMaterial)
-                .frame(width: 46, height: 46)
-                .overlay(Image(systemName: "sparkles").foregroundStyle(CardlyUI.accent))
+
+            ZStack {
+                Circle()
+                    .fill(.ultraThinMaterial)
+                    .frame(width: 46, height: 46)
+
+                Image(systemName: "sparkles")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(CardlyUI.accent)
+            }
         }
-        .padding(.top, 12)
+    }
+
+    private var searchBar: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(.secondary)
+
+            TextField("Cerca tessera, negozio o codice", text: $search)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+
+            if !search.isEmpty {
+                Button {
+                    search = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, 16)
+        .frame(height: 50)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(.white.opacity(0.14), lineWidth: 0.8)
+        }
     }
 
     private var quickActions: some View {
-        HStack(spacing: 12) {
-            quick("Scansiona", "barcode.viewfinder") { showAdd = true }
-            quick("Preferiti", "star.fill") { }
-            quick("Ordina", "arrow.up.arrow.down") { }
+        HStack(spacing: 10) {
+            quick("Scansiona", "barcode.viewfinder") {
+                showAdd = true
+            }
+
+            quick("Preferiti", "star.fill") {
+                // La sezione preferiti resta raggiungibile dalla barra inferiore.
+            }
+
+            quick("Ordina", "arrow.up.arrow.down") {
+                // Predisposto per ordinamento intelligente.
+            }
         }
     }
 
     private func quick(_ title: String, _ icon: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            VStack(spacing: 8) {
+            VStack(spacing: 7) {
                 Image(systemName: icon)
-                    .font(.title3)
+                    .font(.system(size: 19, weight: .semibold))
+
                 Text(title)
-                    .font(.caption.weight(.semibold))
+                    .font(.system(size: 11, weight: .semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             }
+            .foregroundStyle(.primary)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: 22).stroke(.white.opacity(0.12), lineWidth: 0.8))
+            .frame(height: 74)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .stroke(.white.opacity(0.12), lineWidth: 0.8)
+            }
         }
         .buttonStyle(.plain)
     }
@@ -87,16 +143,20 @@ struct WalletView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 9) {
                 categoryChip(nil, "Tutte", "square.grid.2x2.fill")
+
                 ForEach(CardCategory.allCases) { item in
                     categoryChip(item, item.rawValue, item.symbol)
                 }
             }
+            .padding(.vertical, 2)
         }
     }
 
     private func categoryChip(_ value: CardCategory?, _ title: String, _ icon: String) -> some View {
         Button {
-            withAnimation(.snappy) { selectedCategory = value }
+            withAnimation(.snappy) {
+                selectedCategory = value
+            }
         } label: {
             Label(title, systemImage: icon)
                 .font(.caption.weight(.semibold))
@@ -105,7 +165,15 @@ struct WalletView: View {
                 .background(selectedCategory == value ? CardlyUI.accent.opacity(0.18) : .clear)
                 .background(.ultraThinMaterial, in: Capsule())
                 .foregroundStyle(selectedCategory == value ? CardlyUI.accent : .primary)
-                .overlay(Capsule().stroke(selectedCategory == value ? CardlyUI.accent.opacity(0.55) : .white.opacity(0.10)))
+                .overlay {
+                    Capsule()
+                        .stroke(
+                            selectedCategory == value
+                            ? CardlyUI.accent.opacity(0.55)
+                            : .white.opacity(0.10),
+                            lineWidth: 0.8
+                        )
+                }
         }
         .buttonStyle(.plain)
     }
@@ -131,15 +199,29 @@ struct WalletView: View {
         GlassCard(radius: 34) {
             VStack(spacing: 18) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 26).fill(.ultraThinMaterial).frame(width: 140, height: 92).rotationEffect(.degrees(-8))
-                    RoundedRectangle(cornerRadius: 26).fill(CardlyUI.accent.opacity(0.18)).frame(width: 140, height: 92).rotationEffect(.degrees(8))
+                    RoundedRectangle(cornerRadius: 26)
+                        .fill(.ultraThinMaterial)
+                        .frame(width: 140, height: 92)
+                        .rotationEffect(.degrees(-8))
+
+                    RoundedRectangle(cornerRadius: 26)
+                        .fill(CardlyUI.accent.opacity(0.18))
+                        .frame(width: 140, height: 92)
+                        .rotationEffect(.degrees(8))
+
                     Image(systemName: "wallet.pass.fill")
                         .font(.system(size: 40))
                         .foregroundStyle(CardlyUI.accent)
                 }
-                Text("Il tuo wallet è vuoto").font(.title3.bold())
+
+                Text("Il tuo wallet è vuoto")
+                    .font(.title3.bold())
+
                 Text("Scansiona la prima tessera e Cardly farà il resto.")
-                    .font(.subheadline).foregroundStyle(.secondary)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+
                 Button {
                     showAdd = true
                 } label: {
@@ -151,7 +233,7 @@ struct WalletView: View {
                 .controlSize(.large)
             }
         }
-        .padding(.top, 8)
+        .padding(.top, 4)
     }
 }
 
@@ -166,8 +248,17 @@ struct HeroCardView: View {
         ZStack {
             LinearGradient(colors: palette, startPoint: .topLeading, endPoint: .bottomTrailing)
 
-            Circle().fill(.white.opacity(0.16)).frame(width: 240, height: 240).blur(radius: 4).offset(x: 150, y: -120)
-            Circle().fill(.black.opacity(0.12)).frame(width: 180, height: 180).blur(radius: 8).offset(x: -150, y: 110)
+            Circle()
+                .fill(.white.opacity(0.16))
+                .frame(width: 240, height: 240)
+                .blur(radius: 4)
+                .offset(x: 150, y: -120)
+
+            Circle()
+                .fill(.black.opacity(0.12))
+                .frame(width: 180, height: 180)
+                .blur(radius: 8)
+                .offset(x: -150, y: 110)
 
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
@@ -175,17 +266,32 @@ struct HeroCardView: View {
                         .font(.title3.bold())
                         .frame(width: 48, height: 48)
                         .background(.white.opacity(0.16), in: RoundedRectangle(cornerRadius: 16))
+
                     Spacer()
-                    if card.favorite { Image(systemName: "star.fill") }
+
+                    if card.favorite {
+                        Image(systemName: "star.fill")
+                    }
                 }
+
                 Spacer()
-                Text(card.title).font(.system(size: 26, weight: .bold, design: .rounded)).lineLimit(1)
+
+                Text(card.title)
+                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                    .lineLimit(1)
+
                 Text(card.subtitle.isEmpty ? card.category.rawValue : card.subtitle)
-                    .font(.subheadline).foregroundStyle(.white.opacity(0.78))
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.78))
+
                 HStack {
-                    Text(mask(card.code)).font(.caption.monospaced().weight(.semibold))
+                    Text(mask(card.code))
+                        .font(.caption.monospaced().weight(.semibold))
+
                     Spacer()
-                    Image(systemName: card.codeType == .qr ? "qrcode" : "barcode").font(.title2)
+
+                    Image(systemName: card.codeType == .qr ? "qrcode" : "barcode")
+                        .font(.title2)
                 }
                 .padding(.top, 15)
             }
@@ -194,7 +300,10 @@ struct HeroCardView: View {
         }
         .frame(height: 220)
         .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 32).stroke(.white.opacity(0.24), lineWidth: 1))
+        .overlay {
+            RoundedRectangle(cornerRadius: 32)
+                .stroke(.white.opacity(0.24), lineWidth: 1)
+        }
         .shadow(color: palette[0].opacity(0.30), radius: 26, y: 12)
     }
 

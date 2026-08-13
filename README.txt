@@ -27,3 +27,12 @@ BUILD
 - Versione 2.0
 - Build 10
 - Bundle ID com.cardlynew.app
+
+
+BUILD 11 FIX
+- Barra inferiore rifatta con safeAreaInset
+- Nessuna sovrapposizione con i contenuti
+- Pulsanti inferiori riallineati
+- Ricerca Home integrata e non più coperta
+- Quick actions Home riallineate
+- Cardly Labs aggiunto alle Impostazioni con moduli sperimentali
