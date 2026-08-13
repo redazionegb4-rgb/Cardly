@@ -1,48 +1,25 @@
 import SwiftUI
 
 enum CardlyTheme {
-    static let blue = Color(hex: "0F5BFF")
-    static let cyan = Color(hex: "35C5FF")
-    static let ink = Color(hex: "07111F")
-
-    static let cardColors = [
-        "0F5BFF", "00A6A6", "FF5C35", "7A5AF8",
-        "D63B7A", "151A24", "2970FF", "12B76A"
+    static let accent = Color(red: 0.02, green: 0.42, blue: 0.98)
+    static let gradients: [[Color]] = [
+        [.black, Color(red: 0.10, green: 0.11, blue: 0.14)],
+        [Color(red: 0.02, green: 0.36, blue: 0.95), Color(red: 0.02, green: 0.18, blue: 0.52)],
+        [Color(red: 0.07, green: 0.50, blue: 0.38), Color(red: 0.03, green: 0.25, blue: 0.20)],
+        [Color(red: 0.43, green: 0.27, blue: 0.91), Color(red: 0.22, green: 0.13, blue: 0.52)],
+        [Color(red: 0.82, green: 0.24, blue: 0.20), Color(red: 0.48, green: 0.10, blue: 0.09)],
+        [Color(red: 0.73, green: 0.52, blue: 0.16), Color(red: 0.44, green: 0.30, blue: 0.07)]
     ]
 }
 
 struct CardlyBackground: View {
-    @Environment(\.colorScheme) private var scheme
-
-    var body: some View {
-        ZStack {
-            Color(.systemGroupedBackground)
-            Circle()
-                .fill(CardlyTheme.blue.opacity(scheme == .dark ? 0.18 : 0.12))
-                .frame(width: 340, height: 340)
-                .blur(radius: 55)
-                .offset(x: 150, y: -330)
-
-            Circle()
-                .fill(CardlyTheme.cyan.opacity(scheme == .dark ? 0.10 : 0.08))
-                .frame(width: 280, height: 280)
-                .blur(radius: 60)
-                .offset(x: -150, y: 360)
-        }
-        .ignoresSafeArea()
-    }
+    var body: some View { Color(.systemBackground).ignoresSafeArea() }
 }
 
 struct GlassPanel<Content: View>: View {
     @ViewBuilder var content: Content
-
     var body: some View {
-        content
-            .padding(18)
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
-                    .stroke(.white.opacity(0.14), lineWidth: 0.7)
-            )
+        content.padding(18)
+            .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
     }
 }

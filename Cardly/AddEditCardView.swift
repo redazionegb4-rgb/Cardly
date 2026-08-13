@@ -114,7 +114,7 @@ struct AddEditCardView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(CardlyTheme.blue)
+                .tint(.black)
             }
         }
     }

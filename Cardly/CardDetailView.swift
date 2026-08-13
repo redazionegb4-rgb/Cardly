@@ -67,7 +67,7 @@ struct CardDetailView: View {
                                     .frame(maxWidth: .infinity)
                             }
                             .buttonStyle(.borderedProminent)
-                            .tint(CardlyTheme.blue)
+                            .tint(.black)
 
                             Button {
                                 showEdit = true

@@ -12,6 +12,6 @@ struct RootView: View {
             SettingsView()
                 .tabItem { Label("Impostazioni", systemImage: "gearshape.fill") }
         }
-        .tint(CardlyTheme.blue)
+        .tint(CardlyTheme.accent)
     }
 }

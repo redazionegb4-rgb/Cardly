@@ -1,30 +1,12 @@
-CARDLY — BUILD 4 — REDESIGN COMPLETO
-Versione 1.0 / Build 4
+CARDLY — VERSIONE 1.0 / BUILD 5
 Bundle Identifier: com.cardlynew.app
-Target: iPhone / iOS 17+
 
-NOVITÀ
-- Grafica completamente rifatta da zero
-- Nuova icona Cardly
-- Home premium stile wallet
-- Card molto più grandi e visive
-- Aggiunta e modifica tessera
-- Scanner QR / barcode
-- Categorie
-- Ricerca
-- Preferiti
-- Note
-- Luminosità massima quando si apre il codice
-- Face ID realmente funzionante
-- Tema chiaro/scuro/automatico
-- Salvataggio locale
+REDESIGN COMPLETO
+- UI ultra-minimal completamente diversa
+- Home bianca/nera, niente glass pesante
+- Tessere sovrapposte stile wallet reale
+- Nuova icona minimal senza lettere e senza barcode
+- Scanner, categorie, ricerca, preferiti, note e Face ID
 - iPhone only
-- Info.plist generato automaticamente da Xcode
-- Bundle ID già configurato: com.cardlynew.app
 
-PRIMA DI ARCHIVIARE
-1. Apri Cardly.xcodeproj
-2. TARGETS > Cardly > Signing & Capabilities
-3. Seleziona il tuo Team Apple Developer
-4. Product > Clean Build Folder
-5. Product > Archive
+Prima dell’Archive: seleziona il tuo Team in Signing & Capabilities.
