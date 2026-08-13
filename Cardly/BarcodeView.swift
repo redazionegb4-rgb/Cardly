@@ -8,36 +8,31 @@ struct BarcodeImageView: View {
     private let context = CIContext()
 
     var body: some View {
-        Group {
-            if let image = generate() {
-                Image(uiImage: image)
-                    .interpolation(.none)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity, minHeight: 185, maxHeight: 195)
-            } else {
-                Label("Codice non valido", systemImage: "exclamationmark.triangle")
-                    .foregroundStyle(.secondary)
-            }
+        if let image = makeImage() {
+            Image(uiImage: image)
+                .interpolation(.none)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: .infinity, minHeight: 190, maxHeight: 200)
+        } else {
+            ContentUnavailableView("Codice non valido", systemImage: "exclamationmark.triangle")
         }
     }
 
-    private func generate() -> UIImage? {
+    private func makeImage() -> UIImage? {
         let output: CIImage?
-
         switch type {
         case .qr:
-            let filter = CIFilter.qrCodeGenerator()
-            filter.message = Data(value.utf8)
-            filter.correctionLevel = "M"
-            output = filter.outputImage
+            let f = CIFilter.qrCodeGenerator()
+            f.message = Data(value.utf8)
+            f.correctionLevel = "M"
+            output = f.outputImage
         case .barcode:
-            let filter = CIFilter.code128BarcodeGenerator()
-            filter.message = Data(value.utf8)
-            filter.quietSpace = 8
-            output = filter.outputImage
+            let f = CIFilter.code128BarcodeGenerator()
+            f.message = Data(value.utf8)
+            f.quietSpace = 8
+            output = f.outputImage
         }
-
         guard let output else { return nil }
         let scaled = output.transformed(by: CGAffineTransform(scaleX: 10, y: 10))
         guard let cg = context.createCGImage(scaled, from: scaled.extent) else { return nil }

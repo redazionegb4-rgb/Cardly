@@ -1,29 +1,29 @@
-CARDLY — VERSIONE 1.0 / BUILD 9 — LIQUID PRISM
+CARDLY 2.0 — BUILD 10
 Bundle ID: com.cardlynew.app
-Target: iPhone / iOS 17+
+iPhone / iOS 17+
+
+ICONA
+- Mantiene ESATTAMENTE l'icona della Build 9.
 
 REDESIGN COMPLETO
-- Nuovo stile Liquid Prism
-- Sfondo aurora con profondità
-- Pannelli glass traslucidi
-- Tessere con riflessi, glow e profondità
-- Nuova icona futuristica glass/prism
-- Home completamente ridisegnata
-- Aggiunta tessera con anteprima live
-- QR e barcode
-- Scanner fotocamera
-- Preferiti
-- Ricerca
+- Onboarding animato
+- Sfondo dinamico aurora
+- Home con stack 3D delle tessere
+- Azioni rapide
 - Categorie glass
-- Note
+- Tab bar glass custom
+- Pulsante centrale +
+- Wizard aggiunta tessera in 3 step
+- Scanner protagonista
+- Anteprima live
+- Dettaglio tessera immersivo
+- Luminosità automatica
+- Preferiti
+- Impostazioni completamente custom
 - Face ID
-- Tema chiaro/scuro/automatico
-- Luminosità massima nel dettaglio tessera
-- iPhone only
+- Tema automatico/chiaro/scuro
 
-PER ARCHIVE
-1. Apri Cardly.xcodeproj
-2. TARGETS > Cardly > Signing & Capabilities
-3. Seleziona il tuo Team
-4. Product > Clean Build Folder
-5. Product > Archive
+BUILD
+- Versione 2.0
+- Build 10
+- Bundle ID com.cardlynew.app

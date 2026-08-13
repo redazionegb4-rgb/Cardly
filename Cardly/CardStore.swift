@@ -3,28 +3,27 @@ import Foundation
 @MainActor
 final class CardStore: ObservableObject {
     @Published var cards: [LoyaltyCard] = [] { didSet { save() } }
-    private let key = "cardly.liquidprism.cards"
+
+    private let key = "cardly.v2.cards"
 
     init() {
         guard let data = UserDefaults.standard.data(forKey: key),
-              let saved = try? JSONDecoder().decode([LoyaltyCard].self, from: data) else { return }
-        cards = saved
+              let decoded = try? JSONDecoder().decode([LoyaltyCard].self, from: data) else { return }
+        cards = decoded
     }
 
     func add(_ card: LoyaltyCard) { cards.insert(card, at: 0) }
 
     func update(_ card: LoyaltyCard) {
-        guard let index = cards.firstIndex(where: { $0.id == card.id }) else { return }
-        cards[index] = card
+        guard let i = cards.firstIndex(where: { $0.id == card.id }) else { return }
+        cards[i] = card
     }
 
-    func delete(_ card: LoyaltyCard) {
-        cards.removeAll { $0.id == card.id }
-    }
+    func delete(_ card: LoyaltyCard) { cards.removeAll { $0.id == card.id } }
 
     func toggleFavorite(_ card: LoyaltyCard) {
-        guard let index = cards.firstIndex(where: { $0.id == card.id }) else { return }
-        cards[index].favorite.toggle()
+        guard let i = cards.firstIndex(where: { $0.id == card.id }) else { return }
+        cards[i].favorite.toggle()
     }
 
     private func save() {

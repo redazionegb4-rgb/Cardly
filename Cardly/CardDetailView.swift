@@ -4,81 +4,55 @@ struct CardDetailView: View {
     @EnvironmentObject private var store: CardStore
     @Environment(\.dismiss) private var dismiss
     let cardID: UUID
-
     @State private var showEdit = false
-    @State private var originalBrightness: CGFloat?
+    @State private var oldBrightness: CGFloat?
 
-    private var card: LoyaltyCard? {
-        store.cards.first(where: { $0.id == cardID })
-    }
+    private var card: LoyaltyCard? { store.cards.first(where: { $0.id == cardID }) }
 
     var body: some View {
         ZStack {
-            AuroraBackground()
+            DynamicBackdrop()
 
             if let card {
                 ScrollView {
                     VStack(spacing: 18) {
-                        PrismCardView(card: card)
+                        HeroCardView(card: card)
+                            .padding(.top, 8)
 
-                        LiquidGlass(cornerRadius: 32) {
+                        GlassCard(radius: 34) {
                             VStack(spacing: 18) {
                                 HStack {
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text("Mostra alla cassa")
-                                            .font(.title3.bold())
-                                        Text(card.codeType.rawValue)
-                                            .font(.caption)
-                                            .foregroundStyle(.secondary)
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text("Mostra alla cassa").font(.title3.bold())
+                                        Text("Luminosità al massimo").font(.caption).foregroundStyle(.secondary)
                                     }
                                     Spacer()
-                                    Image(systemName: "sun.max.fill")
-                                        .font(.title3)
-                                        .foregroundStyle(.yellow)
+                                    Image(systemName: "sun.max.fill").foregroundStyle(.yellow)
                                 }
 
                                 BarcodeImageView(value: card.code, type: card.codeType)
                                     .padding(14)
-                                    .background(.white, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+                                    .background(.white, in: RoundedRectangle(cornerRadius: 24))
 
-                                Text(card.code)
-                                    .font(.body.monospaced())
-                                    .textSelection(.enabled)
-                            }
-                        }
-
-                        if !card.notes.isEmpty {
-                            LiquidGlass {
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Label("Note", systemImage: "note.text")
-                                        .font(.headline)
-                                    Text(card.notes)
-                                        .foregroundStyle(.secondary)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                }
+                                Text(card.code).font(.body.monospaced()).textSelection(.enabled)
                             }
                         }
 
                         HStack(spacing: 12) {
-                            Button {
+                            action(card.favorite ? "Preferita" : "Preferiti", card.favorite ? "star.fill" : "star") {
                                 store.toggleFavorite(card)
-                            } label: {
-                                Label(card.favorite ? "Preferita" : "Preferiti",
-                                      systemImage: card.favorite ? "star.fill" : "star")
-                                    .frame(maxWidth: .infinity)
                             }
-                            .buttonStyle(.borderedProminent)
-                            .controlSize(.large)
-                            .tint(LiquidDesign.accent)
+                            action("Modifica", "pencil") { showEdit = true }
+                        }
 
-                            Button {
-                                showEdit = true
-                            } label: {
-                                Label("Modifica", systemImage: "pencil")
-                                    .frame(maxWidth: .infinity)
+                        if !card.notes.isEmpty {
+                            GlassCard {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Label("Note", systemImage: "note.text").font(.headline)
+                                    Text(card.notes).foregroundStyle(.secondary)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
                             }
-                            .buttonStyle(.bordered)
-                            .controlSize(.large)
                         }
 
                         Button(role: .destructive) {
@@ -90,30 +64,24 @@ struct CardDetailView: View {
                         }
                         .buttonStyle(.bordered)
                     }
-                    .padding(16)
+                    .padding(18)
+                    .padding(.bottom, 100)
                 }
-                .sheet(isPresented: $showEdit) {
-                    AddEditCardView(card: card)
-                }
-                .onAppear { maximizeBrightness() }
-                .onDisappear { restoreBrightness() }
-            } else {
-                ContentUnavailableView("Tessera non trovata", systemImage: "exclamationmark.triangle")
+                .sheet(isPresented: $showEdit) { AddEditCardView(card: card) }
+                .onAppear { oldBrightness = UIScreen.main.brightness; UIScreen.main.brightness = 1 }
+                .onDisappear { if let oldBrightness { UIScreen.main.brightness = oldBrightness } }
             }
         }
         .navigationTitle(card?.title ?? "Tessera")
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    private func maximizeBrightness() {
-        guard originalBrightness == nil else { return }
-        originalBrightness = UIScreen.main.brightness
-        UIScreen.main.brightness = 1
-    }
-
-    private func restoreBrightness() {
-        guard let originalBrightness else { return }
-        UIScreen.main.brightness = originalBrightness
-        self.originalBrightness = nil
+    private func action(_ title: String, _ icon: String, perform: @escaping () -> Void) -> some View {
+        Button(action: perform) {
+            Label(title, systemImage: icon).frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.borderedProminent)
+        .tint(CardlyUI.accent)
+        .controlSize(.large)
     }
 }

@@ -5,6 +5,7 @@ struct AddEditCardView: View {
     @EnvironmentObject private var store: CardStore
 
     let editingCard: LoyaltyCard?
+    @State private var step = 0
 
     @State private var title: String
     @State private var subtitle: String
@@ -13,7 +14,7 @@ struct AddEditCardView: View {
     @State private var codeType: CodeType
     @State private var styleIndex: Int
     @State private var notes: String
-    @State private var showScanner = false
+    @State private var scanner = false
 
     init(card: LoyaltyCard? = nil) {
         editingCard = card
@@ -29,122 +30,132 @@ struct AddEditCardView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AuroraBackground()
+                DynamicBackdrop()
 
-                ScrollView {
-                    VStack(spacing: 18) {
-                        PrismCardView(card: previewCard)
+                VStack(spacing: 16) {
+                    progress
 
-                        LiquidGlass {
-                            VStack(alignment: .leading, spacing: 14) {
-                                sectionHeader("Identità", "sparkles")
-                                TextField("Nome tessera o negozio", text: $title)
-                                    .textFieldStyle(.roundedBorder)
-                                TextField("Sottotitolo", text: $subtitle)
-                                    .textFieldStyle(.roundedBorder)
+                    if step == 0 { scanStep }
+                    else if step == 1 { identityStep }
+                    else { styleStep }
 
-                                Picker("Categoria", selection: $category) {
-                                    ForEach(CardCategory.allCases) { item in
-                                        Label(item.rawValue, systemImage: item.symbol).tag(item)
-                                    }
-                                }
-                            }
-                        }
+                    Spacer()
 
-                        LiquidGlass {
-                            VStack(alignment: .leading, spacing: 14) {
-                                sectionHeader("Codice", "barcode.viewfinder")
-                                TextField("Numero tessera / contenuto", text: $code)
-                                    .textInputAutocapitalization(.never)
-                                    .autocorrectionDisabled()
-                                    .textFieldStyle(.roundedBorder)
-
-                                Picker("Formato", selection: $codeType) {
-                                    ForEach(CodeType.allCases) { type in
-                                        Text(type.rawValue).tag(type)
-                                    }
-                                }
-
-                                Button {
-                                    showScanner = true
-                                } label: {
-                                    Label("Scansiona con fotocamera", systemImage: "camera.viewfinder")
-                                        .frame(maxWidth: .infinity)
-                                }
-                                .buttonStyle(.borderedProminent)
+                    HStack(spacing: 12) {
+                        if step > 0 {
+                            Button("Indietro") { withAnimation(.snappy) { step -= 1 } }
+                                .buttonStyle(.bordered)
                                 .controlSize(.large)
-                                .tint(LiquidDesign.accent)
-                            }
                         }
 
-                        LiquidGlass {
-                            VStack(alignment: .leading, spacing: 14) {
-                                sectionHeader("Stile tessera", "paintpalette.fill")
-
-                                HStack(spacing: 12) {
-                                    ForEach(0..<LiquidDesign.cardPalettes.count, id: \.self) { index in
-                                        Button {
-                                            withAnimation(.snappy) { styleIndex = index }
-                                        } label: {
-                                            Circle()
-                                                .fill(
-                                                    LinearGradient(
-                                                        colors: LiquidDesign.cardPalettes[index],
-                                                        startPoint: .topLeading,
-                                                        endPoint: .bottomTrailing
-                                                    )
-                                                )
-                                                .frame(width: 46, height: 46)
-                                                .overlay {
-                                                    if index == styleIndex {
-                                                        Image(systemName: "checkmark")
-                                                            .font(.caption.bold())
-                                                            .foregroundStyle(.white)
-                                                    }
-                                                }
-                                                .overlay {
-                                                    Circle().stroke(.white.opacity(0.22), lineWidth: 1)
-                                                }
-                                        }
-                                        .buttonStyle(.plain)
-                                    }
-                                }
-                            }
+                        Button(step == 2 ? "Salva tessera" : "Continua") {
+                            if step < 2 { withAnimation(.snappy) { step += 1 } }
+                            else { save() }
                         }
-
-                        LiquidGlass {
-                            VStack(alignment: .leading, spacing: 12) {
-                                sectionHeader("Note", "note.text")
-                                TextField("Note facoltative", text: $notes, axis: .vertical)
-                                    .lineLimit(3...6)
-                                    .textFieldStyle(.roundedBorder)
-                            }
-                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
+                        .tint(CardlyUI.accent)
+                        .frame(maxWidth: .infinity)
+                        .disabled(step == 0 && code.isEmpty || step == 1 && title.isEmpty)
                     }
-                    .padding(16)
                 }
+                .padding(18)
             }
             .navigationTitle(editingCard == nil ? "Nuova tessera" : "Modifica tessera")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Annulla") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Salva") { save() }
-                        .fontWeight(.semibold)
-                        .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
-                                  code.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    Button("Chiudi") { dismiss() }
                 }
             }
-            .fullScreenCover(isPresented: $showScanner) {
-                ScannerView(scannedValue: $code)
-                    .ignoresSafeArea()
+            .fullScreenCover(isPresented: $scanner) {
+                ScannerView(scannedValue: $code).ignoresSafeArea()
             }
         }
     }
 
-    private var previewCard: LoyaltyCard {
+    private var progress: some View {
+        HStack(spacing: 8) {
+            ForEach(0..<3) { i in
+                Capsule()
+                    .fill(i <= step ? CardlyUI.accent : Color.secondary.opacity(0.2))
+                    .frame(height: 6)
+            }
+        }
+    }
+
+    private var scanStep: some View {
+        GlassCard(radius: 34) {
+            VStack(spacing: 20) {
+                Image(systemName: "barcode.viewfinder")
+                    .font(.system(size: 48))
+                    .foregroundStyle(CardlyUI.accent)
+                Text("Scansiona la tessera").font(.title2.bold())
+                Text("Inquadra il barcode o QR. Puoi anche inserire il codice manualmente.")
+                    .font(.subheadline).foregroundStyle(.secondary).multilineTextAlignment(.center)
+
+                Button {
+                    scanner = true
+                } label: {
+                    Label("Apri scanner", systemImage: "camera.viewfinder")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(CardlyUI.accent)
+
+                TextField("Codice manuale", text: $code)
+                    .textFieldStyle(.roundedBorder)
+
+                Picker("Formato", selection: $codeType) {
+                    ForEach(CodeType.allCases) { Text($0.rawValue).tag($0) }
+                }
+            }
+        }
+    }
+
+    private var identityStep: some View {
+        GlassCard(radius: 34) {
+            VStack(spacing: 16) {
+                HeroCardView(card: preview)
+                TextField("Nome negozio o tessera", text: $title).textFieldStyle(.roundedBorder)
+                TextField("Sottotitolo", text: $subtitle).textFieldStyle(.roundedBorder)
+                Picker("Categoria", selection: $category) {
+                    ForEach(CardCategory.allCases) { item in
+                        Label(item.rawValue, systemImage: item.symbol).tag(item)
+                    }
+                }
+            }
+        }
+    }
+
+    private var styleStep: some View {
+        GlassCard(radius: 34) {
+            VStack(spacing: 16) {
+                HeroCardView(card: preview)
+                Text("Scegli lo stile").font(.headline)
+                HStack(spacing: 12) {
+                    ForEach(0..<CardlyUI.palettes.count, id: \.self) { i in
+                        Button {
+                            styleIndex = i
+                        } label: {
+                            Circle()
+                                .fill(LinearGradient(colors: CardlyUI.palettes[i], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                .frame(width: 46, height: 46)
+                                .overlay {
+                                    if styleIndex == i { Image(systemName: "checkmark").foregroundStyle(.white).font(.caption.bold()) }
+                                }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                TextField("Note facoltative", text: $notes, axis: .vertical)
+                    .lineLimit(3...5)
+                    .textFieldStyle(.roundedBorder)
+            }
+        }
+    }
+
+    private var preview: LoyaltyCard {
         LoyaltyCard(
             title: title.isEmpty ? "La tua tessera" : title,
             subtitle: subtitle,
@@ -155,31 +166,15 @@ struct AddEditCardView: View {
         )
     }
 
-    private func sectionHeader(_ title: String, _ symbol: String) -> some View {
-        Label(title, systemImage: symbol)
-            .font(.headline)
-    }
-
     private func save() {
-        if var card = editingCard {
-            card.title = title.trimmingCharacters(in: .whitespacesAndNewlines)
-            card.subtitle = subtitle.trimmingCharacters(in: .whitespacesAndNewlines)
-            card.code = code.trimmingCharacters(in: .whitespacesAndNewlines)
-            card.category = category
-            card.codeType = codeType
-            card.styleIndex = styleIndex
-            card.notes = notes.trimmingCharacters(in: .whitespacesAndNewlines)
-            store.update(card)
+        if var c = editingCard {
+            c.title = title; c.subtitle = subtitle; c.code = code; c.category = category
+            c.codeType = codeType; c.styleIndex = styleIndex; c.notes = notes
+            store.update(c)
         } else {
-            store.add(LoyaltyCard(
-                title: title.trimmingCharacters(in: .whitespacesAndNewlines),
-                subtitle: subtitle.trimmingCharacters(in: .whitespacesAndNewlines),
-                code: code.trimmingCharacters(in: .whitespacesAndNewlines),
-                category: category,
-                codeType: codeType,
-                styleIndex: styleIndex,
-                notes: notes.trimmingCharacters(in: .whitespacesAndNewlines)
-            ))
+            store.add(LoyaltyCard(title: title, subtitle: subtitle, code: code,
+                                  category: category, codeType: codeType,
+                                  styleIndex: styleIndex, notes: notes))
         }
         dismiss()
     }

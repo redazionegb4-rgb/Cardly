@@ -17,36 +17,19 @@ struct LockGateView<Content: View>: View {
                 content
             } else {
                 ZStack {
-                    AuroraBackground()
+                    DynamicBackdrop()
 
-                    LiquidGlass(cornerRadius: 36) {
+                    GlassCard(radius: 36) {
                         VStack(spacing: 18) {
-                            ZStack {
-                                Circle()
-                                    .fill(LiquidDesign.accent.opacity(0.20))
-                                    .frame(width: 86, height: 86)
-                                Image(systemName: "faceid")
-                                    .font(.system(size: 44, weight: .medium))
-                                    .foregroundStyle(LiquidDesign.accent)
-                            }
-
-                            Text("Cardly è protetta")
-                                .font(.title2.bold())
-
-                            Text("Usa Face ID per accedere alle tue tessere.")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                                .multilineTextAlignment(.center)
-
-                            Button {
-                                authenticate()
-                            } label: {
-                                Label("Sblocca", systemImage: "faceid")
-                                    .frame(maxWidth: .infinity)
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .controlSize(.large)
-                            .tint(LiquidDesign.accent)
+                            Image(systemName: "faceid")
+                                .font(.system(size: 50))
+                                .foregroundStyle(CardlyUI.accent)
+                            Text("Cardly è protetta").font(.title2.bold())
+                            Text("Usa Face ID per entrare nel tuo wallet.")
+                                .font(.subheadline).foregroundStyle(.secondary)
+                            Button("Sblocca") { authenticate() }
+                                .buttonStyle(.borderedProminent)
+                                .tint(CardlyUI.accent)
                         }
                     }
                     .padding(28)
@@ -58,18 +41,14 @@ struct LockGateView<Content: View>: View {
 
     private func authenticate() {
         let context = LAContext()
-        context.localizedCancelTitle = "Annulla"
         var error: NSError?
-
         guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) else {
             unlocked = true
             return
         }
 
-        context.evaluatePolicy(
-            .deviceOwnerAuthenticationWithBiometrics,
-            localizedReason: "Sblocca Cardly"
-        ) { success, _ in
+        context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
+                               localizedReason: "Sblocca Cardly") { success, _ in
             DispatchQueue.main.async {
                 if success { unlocked = true }
             }

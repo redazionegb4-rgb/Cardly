@@ -2,28 +2,19 @@ import SwiftUI
 
 struct FavoritesView: View {
     @EnvironmentObject private var store: CardStore
-
-    private var favorites: [LoyaltyCard] {
-        store.cards.filter(\.favorite)
-    }
+    private var favorites: [LoyaltyCard] { store.cards.filter(\.favorite) }
 
     var body: some View {
         NavigationStack {
             ZStack {
-                AuroraBackground()
-
+                DynamicBackdrop()
                 if favorites.isEmpty {
-                    LiquidGlass {
+                    GlassCard(radius: 34) {
                         VStack(spacing: 14) {
-                            Image(systemName: "star")
-                                .font(.system(size: 40))
-                                .foregroundStyle(LiquidDesign.accent)
-                            Text("Nessun preferito")
-                                .font(.title3.bold())
-                            Text("Aggiungi ai preferiti le tessere che usi più spesso.")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                                .multilineTextAlignment(.center)
+                            Image(systemName: "star").font(.system(size: 42)).foregroundStyle(CardlyUI.accent)
+                            Text("Nessun preferito").font(.title3.bold())
+                            Text("Le tessere che usi di più appariranno qui.")
+                                .font(.subheadline).foregroundStyle(.secondary)
                         }
                     }
                     .padding()
@@ -33,13 +24,12 @@ struct FavoritesView: View {
                             ForEach(favorites) { card in
                                 NavigationLink {
                                     CardDetailView(cardID: card.id)
-                                } label: {
-                                    PrismCardView(card: card)
-                                }
+                                } label: { HeroCardView(card: card) }
                                 .buttonStyle(.plain)
                             }
                         }
-                        .padding(16)
+                        .padding(18)
+                        .padding(.bottom, 120)
                     }
                 }
             }

@@ -11,15 +11,13 @@ struct ScannerView: UIViewControllerRepresentable {
         guard DataScannerViewController.isSupported,
               DataScannerViewController.isAvailable else {
             return UIHostingController(rootView:
-                ContentUnavailableView(
-                    "Scanner non disponibile",
-                    systemImage: "camera.fill",
-                    description: Text("Puoi inserire il codice manualmente.")
-                )
+                ContentUnavailableView("Scanner non disponibile",
+                                       systemImage: "camera.fill",
+                                       description: Text("Inserisci il codice manualmente."))
             )
         }
 
-        let controller = DataScannerViewController(
+        let c = DataScannerViewController(
             recognizedDataTypes: [.barcode()],
             qualityLevel: .balanced,
             recognizesMultipleItems: false,
@@ -28,9 +26,9 @@ struct ScannerView: UIViewControllerRepresentable {
             isGuidanceEnabled: true,
             isHighlightingEnabled: true
         )
-        controller.delegate = context.coordinator
-        try? controller.startScanning()
-        return controller
+        c.delegate = context.coordinator
+        try? c.startScanning()
+        return c
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}

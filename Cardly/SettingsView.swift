@@ -3,43 +3,95 @@ import SwiftUI
 struct SettingsView: View {
     @AppStorage("appearance") private var appearance = "system"
     @AppStorage("lockEnabled") private var lockEnabled = false
+    @AppStorage("didOnboard") private var didOnboard = true
 
     var body: some View {
         NavigationStack {
             ZStack {
-                AuroraBackground()
+                DynamicBackdrop()
 
-                Form {
-                    Section("Aspetto") {
-                        Picker("Tema", selection: $appearance) {
-                            Text("Automatico").tag("system")
-                            Text("Chiaro").tag("light")
-                            Text("Scuro").tag("dark")
+                ScrollView {
+                    VStack(spacing: 18) {
+                        header
+
+                        GlassCard {
+                            VStack(spacing: 14) {
+                                settingRow("Tema", "circle.lefthalf.filled") {
+                                    Picker("", selection: $appearance) {
+                                        Text("Auto").tag("system")
+                                        Text("Chiaro").tag("light")
+                                        Text("Scuro").tag("dark")
+                                    }
+                                    .labelsHidden()
+                                }
+
+                                Divider()
+
+                                settingRow("Face ID", "faceid") {
+                                    Toggle("", isOn: $lockEnabled).labelsHidden()
+                                }
+                            }
+                        }
+
+                        GlassCard {
+                            VStack(spacing: 14) {
+                                infoRow("Backup iCloud", "icloud.fill", "In arrivo")
+                                Divider()
+                                infoRow("Salvataggio", "iphone", "Sul dispositivo")
+                                Divider()
+                                infoRow("Versione", "number", "2.0 (10)")
+                            }
+                        }
+
+                        GlassCard {
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Cardly Labs").font(.headline)
+                                Text("Qui arriveranno widget, Apple Watch, smart sorting e riconoscimento automatico dei negozi.")
+                                    .font(.subheadline).foregroundStyle(.secondary)
+
+                                Button("Rivedi onboarding") {
+                                    didOnboard = false
+                                }
+                                .buttonStyle(.bordered)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
-
-                    Section("Privacy") {
-                        Toggle(isOn: $lockEnabled) {
-                            Label("Proteggi con Face ID", systemImage: "faceid")
-                        }
-                    }
-
-                    Section("Dati") {
-                        LabeledContent("Salvataggio", value: "Sul dispositivo")
-                        LabeledContent("Backup iCloud", value: "Prossima build")
-                    }
-
-                    Section("Cardly") {
-                        LabeledContent("Versione", value: "1.0")
-                        LabeledContent("Build", value: "9")
-                        Text("Cardly conserva carte fedeltà e tessere. Non gestisce carte bancarie.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+                    .padding(18)
+                    .padding(.bottom, 120)
                 }
-                .scrollContentBackground(.hidden)
             }
-            .navigationTitle("Impostazioni")
+            .toolbar(.hidden, for: .navigationBar)
+        }
+    }
+
+    private var header: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Impostazioni").font(.system(size: 34, weight: .bold, design: .rounded))
+                Text("Personalizza Cardly").font(.subheadline).foregroundStyle(.secondary)
+            }
+            Spacer()
+            Image(systemName: "slider.horizontal.3")
+                .font(.title2)
+                .frame(width: 46, height: 46)
+                .background(.ultraThinMaterial, in: Circle())
+        }
+    }
+
+    private func settingRow<Accessory: View>(_ title: String, _ icon: String, @ViewBuilder accessory: () -> Accessory) -> some View {
+        HStack {
+            Label(title, systemImage: icon)
+            Spacer()
+            accessory()
+        }
+    }
+
+    private func infoRow(_ title: String, _ icon: String, _ value: String) -> some View {
+        HStack {
+            Label(title, systemImage: icon)
+            Spacer()
+            Text(value).foregroundStyle(.secondary)
         }
     }
 }
