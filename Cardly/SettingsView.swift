@@ -3,7 +3,6 @@ import SwiftUI
 struct SettingsView: View {
     @AppStorage("appearance") private var appearance = "system"
     @AppStorage("lockEnabled") private var lockEnabled = false
-    @AppStorage("didOnboard") private var didOnboard = true
 
     @AppStorage("labsSmartSort") private var labsSmartSort = false
     @AppStorage("labsNearby") private var labsNearby = false
@@ -23,7 +22,7 @@ struct SettingsView: View {
                         aboutCard
                     }
                     .padding(18)
-                    .padding(.bottom, 28)
+                    .padding(.bottom, 36)
                 }
                 .scrollIndicators(.hidden)
             }
@@ -80,7 +79,7 @@ struct SettingsView: View {
                 Divider()
                 infoRow("Salvataggio", "iphone", "Sul dispositivo")
                 Divider()
-                infoRow("Versione", "number", "2.0 (11)")
+                infoRow("Versione", "number", "2.0 (12)")
             }
         }
     }
@@ -170,20 +169,18 @@ struct SettingsView: View {
 
     private var aboutCard: some View {
         GlassCard {
-            VStack(alignment: .leading, spacing: 14) {
-                Text("Cardly")
-                    .font(.headline)
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 10) {
+                    Image(systemName: "wallet.pass.fill")
+                        .foregroundStyle(CardlyUI.accent)
+
+                    Text("Cardly")
+                        .font(.headline)
+                }
 
                 Text("Wallet per carte fedeltà, QR e barcode. Nessuna carta bancaria o dato di pagamento.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
-
-                Button {
-                    didOnboard = false
-                } label: {
-                    Label("Rivedi onboarding", systemImage: "arrow.counterclockwise")
-                }
-                .buttonStyle(.bordered)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }

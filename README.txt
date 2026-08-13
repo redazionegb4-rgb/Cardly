@@ -36,3 +36,12 @@ BUILD 11 FIX
 - Ricerca Home integrata e non più coperta
 - Quick actions Home riallineate
 - Cardly Labs aggiunto alle Impostazioni con moduli sperimentali
+
+
+BUILD 12
+- Rimosso completamente 'Rivedi onboarding'
+- Barra inferiore a 5 elementi
+- Pulsante + perfettamente centrato
+- Nuova sezione Categorie
+- Barra sempre dentro la safe area
+- Impostazioni con maggiore margine inferiore

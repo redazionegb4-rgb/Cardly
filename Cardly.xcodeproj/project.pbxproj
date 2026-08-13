@@ -17,9 +17,10 @@ objects = {
 		AA000000000000000000000A /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000A /* ScannerView.swift */; };
 		AA000000000000000000000B /* CardDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000B /* CardDetailView.swift */; };
 		AA000000000000000000000C /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000C /* FavoritesView.swift */; };
-		AA000000000000000000000D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000D /* SettingsView.swift */; };
+		AA000000000000000000000D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000D /* SettingsView.swift */, BB0000000000000000000015 /* CategoriesView.swift */; };
 		AA000000000000000000000E /* LockGateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000000000000000000000E /* LockGateView.swift */; };
         AAFFFFFFFFFFFFFFFFFFFF01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BBFFFFFFFFFFFFFFFFFFFF01; };
+		AA0000000000000000000015 /* CategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000015 /* CategoriesView.swift */; };
 /* End PBXBuildFile section */
 /* Begin PBXFileReference section */
 		BB0000000000000000000001 /* CardlyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardlyApp.swift; sourceTree = "<group>"; };
@@ -34,14 +35,15 @@ objects = {
 		BB000000000000000000000A /* ScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
 		BB000000000000000000000B /* CardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDetailView.swift; sourceTree = "<group>"; };
 		BB000000000000000000000C /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
-		BB000000000000000000000D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		BB000000000000000000000D /* SettingsView.swift */, BB0000000000000000000015 /* CategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		BB000000000000000000000E /* LockGateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockGateView.swift; sourceTree = "<group>"; };
         BBFFFFFFFFFFFFFFFFFFFF01 = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
         BBFFFFFFFFFFFFFFFFFFFF02 = {isa = PBXFileReference; explicitFileType = wrapper.application; path = Cardly.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB0000000000000000000015 /* CategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
         CC0000000000000000000001 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
         DD0000000000000000000001 = {isa = PBXGroup; children = (DD0000000000000000000002, DD0000000000000000000003); sourceTree = "<group>"; };
-        DD0000000000000000000002 = {isa = PBXGroup; path = Cardly; sourceTree = "<group>"; children = (BB0000000000000000000001 /* CardlyApp.swift */, BB0000000000000000000002 /* Models.swift */, BB0000000000000000000003 /* CardStore.swift */, BB0000000000000000000004 /* DesignSystem.swift */, BB0000000000000000000005 /* OnboardingView.swift */, BB0000000000000000000006 /* MainShell.swift */, BB0000000000000000000007 /* WalletView.swift */, BB0000000000000000000008 /* AddEditCardView.swift */, BB0000000000000000000009 /* BarcodeView.swift */, BB000000000000000000000A /* ScannerView.swift */, BB000000000000000000000B /* CardDetailView.swift */, BB000000000000000000000C /* FavoritesView.swift */, BB000000000000000000000D /* SettingsView.swift */, BB000000000000000000000E /* LockGateView.swift */, BBFFFFFFFFFFFFFFFFFFFF01); };
+        DD0000000000000000000002 = {isa = PBXGroup; path = Cardly; sourceTree = "<group>"; children = (BB0000000000000000000001 /* CardlyApp.swift */, BB0000000000000000000002 /* Models.swift */, BB0000000000000000000003 /* CardStore.swift */, BB0000000000000000000004 /* DesignSystem.swift */, BB0000000000000000000005 /* OnboardingView.swift */, BB0000000000000000000006 /* MainShell.swift */, BB0000000000000000000007 /* WalletView.swift */, BB0000000000000000000008 /* AddEditCardView.swift */, BB0000000000000000000009 /* BarcodeView.swift */, BB000000000000000000000A /* ScannerView.swift */, BB000000000000000000000B /* CardDetailView.swift */, BB000000000000000000000C /* FavoritesView.swift */, BB000000000000000000000D /* SettingsView.swift */, BB0000000000000000000015 /* CategoriesView.swift */, BB000000000000000000000E /* LockGateView.swift */, BBFFFFFFFFFFFFFFFFFFFF01); };
         DD0000000000000000000003 = {isa = PBXGroup; children = (BBFFFFFFFFFFFFFFFFFFFF02); name = Products; sourceTree = "<group>"; };
         EE0000000000000000000001 = {
             isa = PBXNativeTarget; buildConfigurationList = FF0000000000000000000002;
@@ -66,7 +68,7 @@ objects = {
                 ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
                 ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
                 CODE_SIGN_STYLE = Automatic;
-                CURRENT_PROJECT_VERSION = 11;
+                CURRENT_PROJECT_VERSION = 12;
                 DEVELOPMENT_TEAM = "";
                 GENERATE_INFOPLIST_FILE = YES;
                 INFOPLIST_KEY_CFBundleDisplayName = Cardly;
@@ -92,7 +94,7 @@ objects = {
                 ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
                 ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
                 CODE_SIGN_STYLE = Automatic;
-                CURRENT_PROJECT_VERSION = 11;
+                CURRENT_PROJECT_VERSION = 12;
                 DEVELOPMENT_TEAM = "";
                 GENERATE_INFOPLIST_FILE = YES;
                 INFOPLIST_KEY_CFBundleDisplayName = Cardly;
