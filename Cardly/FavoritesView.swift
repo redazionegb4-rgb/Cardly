@@ -4,33 +4,42 @@ struct FavoritesView: View {
     @EnvironmentObject private var store: CardStore
 
     private var favorites: [LoyaltyCard] {
-        store.cards.filter(\.isFavorite)
+        store.cards.filter(\.favorite)
     }
 
     var body: some View {
         NavigationStack {
             ZStack {
-                CardlyBackground()
+                AuroraBackground()
 
                 if favorites.isEmpty {
-                    ContentUnavailableView(
-                        "Nessun preferito",
-                        systemImage: "star",
-                        description: Text("Apri una tessera e tocca Preferiti.")
-                    )
+                    LiquidGlass {
+                        VStack(spacing: 14) {
+                            Image(systemName: "star")
+                                .font(.system(size: 40))
+                                .foregroundStyle(LiquidDesign.accent)
+                            Text("Nessun preferito")
+                                .font(.title3.bold())
+                            Text("Aggiungi ai preferiti le tessere che usi più spesso.")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
+                    }
+                    .padding()
                 } else {
                     ScrollView {
-                        LazyVStack(spacing: 15) {
+                        LazyVStack(spacing: 16) {
                             ForEach(favorites) { card in
                                 NavigationLink {
                                     CardDetailView(cardID: card.id)
                                 } label: {
-                                    WalletCardView(card: card)
+                                    PrismCardView(card: card)
                                 }
                                 .buttonStyle(.plain)
                             }
                         }
-                        .padding()
+                        .padding(16)
                     }
                 }
             }

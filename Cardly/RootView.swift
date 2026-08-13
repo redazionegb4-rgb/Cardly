@@ -3,7 +3,7 @@ import SwiftUI
 struct RootView: View {
     var body: some View {
         TabView {
-            HomeView()
+            WalletView()
                 .tabItem { Label("Wallet", systemImage: "wallet.pass.fill") }
 
             FavoritesView()
@@ -12,6 +12,6 @@ struct RootView: View {
             SettingsView()
                 .tabItem { Label("Impostazioni", systemImage: "gearshape.fill") }
         }
-        .tint(CardlyTheme.accent)
+        .tint(LiquidDesign.accent)
     }
 }

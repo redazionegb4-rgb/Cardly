@@ -4,42 +4,124 @@ struct AddEditCardView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var store: CardStore
 
-    private let editingCard: LoyaltyCard?
+    let editingCard: LoyaltyCard?
 
-    @State private var name: String
+    @State private var title: String
     @State private var subtitle: String
-    @State private var number: String
+    @State private var code: String
     @State private var category: CardCategory
-    @State private var codeKind: CodeKind
-    @State private var colorHex: String
+    @State private var codeType: CodeType
+    @State private var styleIndex: Int
     @State private var notes: String
     @State private var showScanner = false
 
     init(card: LoyaltyCard? = nil) {
         editingCard = card
-        _name = State(initialValue: card?.name ?? "")
+        _title = State(initialValue: card?.title ?? "")
         _subtitle = State(initialValue: card?.subtitle ?? "")
-        _number = State(initialValue: card?.number ?? "")
+        _code = State(initialValue: card?.code ?? "")
         _category = State(initialValue: card?.category ?? .shopping)
-        _codeKind = State(initialValue: card?.codeKind ?? .code128)
-        _colorHex = State(initialValue: card?.colorHex ?? CardlyTheme.cardColors[0])
+        _codeType = State(initialValue: card?.codeType ?? .barcode)
+        _styleIndex = State(initialValue: card?.styleIndex ?? 0)
         _notes = State(initialValue: card?.notes ?? "")
     }
 
     var body: some View {
         NavigationStack {
             ZStack {
-                CardlyBackground()
+                AuroraBackground()
 
                 ScrollView {
                     VStack(spacing: 18) {
-                        preview
-                        detailsSection
-                        codeSection
-                        appearanceSection
-                        notesSection
+                        PrismCardView(card: previewCard)
+
+                        LiquidGlass {
+                            VStack(alignment: .leading, spacing: 14) {
+                                sectionHeader("Identità", "sparkles")
+                                TextField("Nome tessera o negozio", text: $title)
+                                    .textFieldStyle(.roundedBorder)
+                                TextField("Sottotitolo", text: $subtitle)
+                                    .textFieldStyle(.roundedBorder)
+
+                                Picker("Categoria", selection: $category) {
+                                    ForEach(CardCategory.allCases) { item in
+                                        Label(item.rawValue, systemImage: item.symbol).tag(item)
+                                    }
+                                }
+                            }
+                        }
+
+                        LiquidGlass {
+                            VStack(alignment: .leading, spacing: 14) {
+                                sectionHeader("Codice", "barcode.viewfinder")
+                                TextField("Numero tessera / contenuto", text: $code)
+                                    .textInputAutocapitalization(.never)
+                                    .autocorrectionDisabled()
+                                    .textFieldStyle(.roundedBorder)
+
+                                Picker("Formato", selection: $codeType) {
+                                    ForEach(CodeType.allCases) { type in
+                                        Text(type.rawValue).tag(type)
+                                    }
+                                }
+
+                                Button {
+                                    showScanner = true
+                                } label: {
+                                    Label("Scansiona con fotocamera", systemImage: "camera.viewfinder")
+                                        .frame(maxWidth: .infinity)
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .controlSize(.large)
+                                .tint(LiquidDesign.accent)
+                            }
+                        }
+
+                        LiquidGlass {
+                            VStack(alignment: .leading, spacing: 14) {
+                                sectionHeader("Stile tessera", "paintpalette.fill")
+
+                                HStack(spacing: 12) {
+                                    ForEach(0..<LiquidDesign.cardPalettes.count, id: \.self) { index in
+                                        Button {
+                                            withAnimation(.snappy) { styleIndex = index }
+                                        } label: {
+                                            Circle()
+                                                .fill(
+                                                    LinearGradient(
+                                                        colors: LiquidDesign.cardPalettes[index],
+                                                        startPoint: .topLeading,
+                                                        endPoint: .bottomTrailing
+                                                    )
+                                                )
+                                                .frame(width: 46, height: 46)
+                                                .overlay {
+                                                    if index == styleIndex {
+                                                        Image(systemName: "checkmark")
+                                                            .font(.caption.bold())
+                                                            .foregroundStyle(.white)
+                                                    }
+                                                }
+                                                .overlay {
+                                                    Circle().stroke(.white.opacity(0.22), lineWidth: 1)
+                                                }
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
+                            }
+                        }
+
+                        LiquidGlass {
+                            VStack(alignment: .leading, spacing: 12) {
+                                sectionHeader("Note", "note.text")
+                                TextField("Note facoltative", text: $notes, axis: .vertical)
+                                    .lineLimit(3...6)
+                                    .textFieldStyle(.roundedBorder)
+                            }
+                        }
                     }
-                    .padding()
+                    .padding(16)
                 }
             }
             .navigationTitle(editingCard == nil ? "Nuova tessera" : "Modifica tessera")
@@ -51,135 +133,51 @@ struct AddEditCardView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Salva") { save() }
                         .fontWeight(.semibold)
-                        .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty ||
-                                  number.trimmingCharacters(in: .whitespaces).isEmpty)
+                        .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                                  code.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
             .fullScreenCover(isPresented: $showScanner) {
-                ScannerView(scannedValue: $number)
+                ScannerView(scannedValue: $code)
                     .ignoresSafeArea()
             }
         }
     }
 
-    private var preview: some View {
-        WalletCardView(card: LoyaltyCard(
-            name: name.isEmpty ? "Nome tessera" : name,
-            subtitle: subtitle.isEmpty ? category.rawValue : subtitle,
-            number: number.isEmpty ? "000000000000" : number,
+    private var previewCard: LoyaltyCard {
+        LoyaltyCard(
+            title: title.isEmpty ? "La tua tessera" : title,
+            subtitle: subtitle,
+            code: code.isEmpty ? "000000000000" : code,
             category: category,
-            codeKind: codeKind,
-            colorHex: colorHex
-        ))
+            codeType: codeType,
+            styleIndex: styleIndex
+        )
     }
 
-    private var detailsSection: some View {
-        GlassPanel {
-            VStack(alignment: .leading, spacing: 14) {
-                sectionTitle("Dettagli", icon: "text.alignleft")
-                TextField("Nome negozio o tessera", text: $name)
-                    .textFieldStyle(.roundedBorder)
-                TextField("Sottotitolo (opzionale)", text: $subtitle)
-                    .textFieldStyle(.roundedBorder)
-
-                Picker("Categoria", selection: $category) {
-                    ForEach(CardCategory.allCases) { item in
-                        Label(item.rawValue, systemImage: item.icon).tag(item)
-                    }
-                }
-            }
-        }
-    }
-
-    private var codeSection: some View {
-        GlassPanel {
-            VStack(alignment: .leading, spacing: 14) {
-                sectionTitle("Codice", icon: "barcode.viewfinder")
-
-                TextField("Numero tessera / contenuto", text: $number)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
-                    .textFieldStyle(.roundedBorder)
-
-                Picker("Formato", selection: $codeKind) {
-                    ForEach(CodeKind.allCases) { kind in
-                        Text(kind.rawValue).tag(kind)
-                    }
-                }
-
-                Button {
-                    showScanner = true
-                } label: {
-                    Label("Scansiona con fotocamera", systemImage: "camera.viewfinder")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(.black)
-            }
-        }
-    }
-
-    private var appearanceSection: some View {
-        GlassPanel {
-            VStack(alignment: .leading, spacing: 14) {
-                sectionTitle("Colore", icon: "paintpalette.fill")
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 14) {
-                    ForEach(CardlyTheme.cardColors, id: \.self) { value in
-                        Button {
-                            withAnimation(.snappy) { colorHex = value }
-                        } label: {
-                            Circle()
-                                .fill(Color(hex: value).gradient)
-                                .frame(width: 48, height: 48)
-                                .overlay {
-                                    if colorHex == value {
-                                        Image(systemName: "checkmark")
-                                            .font(.headline.bold())
-                                            .foregroundStyle(.white)
-                                    }
-                                }
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-            }
-        }
-    }
-
-    private var notesSection: some View {
-        GlassPanel {
-            VStack(alignment: .leading, spacing: 14) {
-                sectionTitle("Note", icon: "note.text")
-                TextField("Note facoltative", text: $notes, axis: .vertical)
-                    .lineLimit(3...6)
-                    .textFieldStyle(.roundedBorder)
-            }
-        }
-    }
-
-    private func sectionTitle(_ text: String, icon: String) -> some View {
-        Label(text, systemImage: icon)
+    private func sectionHeader(_ title: String, _ symbol: String) -> some View {
+        Label(title, systemImage: symbol)
             .font(.headline)
     }
 
     private func save() {
         if var card = editingCard {
-            card.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
+            card.title = title.trimmingCharacters(in: .whitespacesAndNewlines)
             card.subtitle = subtitle.trimmingCharacters(in: .whitespacesAndNewlines)
-            card.number = number.trimmingCharacters(in: .whitespacesAndNewlines)
+            card.code = code.trimmingCharacters(in: .whitespacesAndNewlines)
             card.category = category
-            card.codeKind = codeKind
-            card.colorHex = colorHex
+            card.codeType = codeType
+            card.styleIndex = styleIndex
             card.notes = notes.trimmingCharacters(in: .whitespacesAndNewlines)
             store.update(card)
         } else {
             store.add(LoyaltyCard(
-                name: name.trimmingCharacters(in: .whitespacesAndNewlines),
+                title: title.trimmingCharacters(in: .whitespacesAndNewlines),
                 subtitle: subtitle.trimmingCharacters(in: .whitespacesAndNewlines),
-                number: number.trimmingCharacters(in: .whitespacesAndNewlines),
+                code: code.trimmingCharacters(in: .whitespacesAndNewlines),
                 category: category,
-                codeKind: codeKind,
-                colorHex: colorHex,
+                codeType: codeType,
+                styleIndex: styleIndex,
                 notes: notes.trimmingCharacters(in: .whitespacesAndNewlines)
             ))
         }

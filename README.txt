@@ -1,26 +1,29 @@
-CARDLY — VERSIONE 1.0 / BUILD 7
-Bundle Identifier: com.cardlynew.app
+CARDLY — VERSIONE 1.0 / BUILD 9 — LIQUID PRISM
+Bundle ID: com.cardlynew.app
+Target: iPhone / iOS 17+
 
 REDESIGN COMPLETO
-- UI ultra-minimal completamente diversa
-- Home bianca/nera, niente glass pesante
-- Tessere sovrapposte stile wallet reale
-- Nuova icona minimal senza lettere e senza barcode
-- Scanner, categorie, ricerca, preferiti, note e Face ID
+- Nuovo stile Liquid Prism
+- Sfondo aurora con profondità
+- Pannelli glass traslucidi
+- Tessere con riflessi, glow e profondità
+- Nuova icona futuristica glass/prism
+- Home completamente ridisegnata
+- Aggiunta tessera con anteprima live
+- QR e barcode
+- Scanner fotocamera
+- Preferiti
+- Ricerca
+- Categorie glass
+- Note
+- Face ID
+- Tema chiaro/scuro/automatico
+- Luminosità massima nel dettaglio tessera
 - iPhone only
 
-Prima dell’Archive: seleziona il tuo Team in Signing & Capabilities.
-
-FIX BUILD 7
-- Corretto LockGateView generico
-- Risolti errori TableColumn / Content / Generic parameter
-
-FIX BUILD 7
-- Rimosso riferimento a PageBackground da LockGateView
-- Lock screen ora usa direttamente Color(.systemBackground)
-
-
-BUILD 8 FIX
-- Aggiunto CardlyTheme.cardColors mancante
-- Verificati i riferimenti usati da AddEditCardView
-- Mantenuto fix LockGateView senza PageBackground
+PER ARCHIVE
+1. Apri Cardly.xcodeproj
+2. TARGETS > Cardly > Signing & Capabilities
+3. Seleziona il tuo Team
+4. Product > Clean Build Folder
+5. Product > Archive

@@ -2,19 +2,16 @@ import Foundation
 
 @MainActor
 final class CardStore: ObservableObject {
-    @Published var cards: [LoyaltyCard] = [] {
-        didSet { persist() }
-    }
-
-    private let key = "cardly.cards.v2"
+    @Published var cards: [LoyaltyCard] = [] { didSet { save() } }
+    private let key = "cardly.liquidprism.cards"
 
     init() {
-        load()
+        guard let data = UserDefaults.standard.data(forKey: key),
+              let saved = try? JSONDecoder().decode([LoyaltyCard].self, from: data) else { return }
+        cards = saved
     }
 
-    func add(_ card: LoyaltyCard) {
-        cards.insert(card, at: 0)
-    }
+    func add(_ card: LoyaltyCard) { cards.insert(card, at: 0) }
 
     func update(_ card: LoyaltyCard) {
         guard let index = cards.firstIndex(where: { $0.id == card.id }) else { return }
@@ -27,19 +24,11 @@ final class CardStore: ObservableObject {
 
     func toggleFavorite(_ card: LoyaltyCard) {
         guard let index = cards.firstIndex(where: { $0.id == card.id }) else { return }
-        cards[index].isFavorite.toggle()
+        cards[index].favorite.toggle()
     }
 
-    private func persist() {
+    private func save() {
         guard let data = try? JSONEncoder().encode(cards) else { return }
         UserDefaults.standard.set(data, forKey: key)
-    }
-
-    private func load() {
-        guard
-            let data = UserDefaults.standard.data(forKey: key),
-            let decoded = try? JSONDecoder().decode([LoyaltyCard].self, from: data)
-        else { return }
-        cards = decoded
     }
 }

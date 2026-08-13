@@ -4,9 +4,9 @@ import SwiftUI
 struct CardlyApp: App {
     @StateObject private var store = CardStore()
     @AppStorage("appearance") private var appearance = "system"
-    @AppStorage("appLock") private var appLock = false
+    @AppStorage("lockEnabled") private var lockEnabled = false
 
-    var preferredScheme: ColorScheme? {
+    private var scheme: ColorScheme? {
         switch appearance {
         case "light": return .light
         case "dark": return .dark
@@ -16,11 +16,11 @@ struct CardlyApp: App {
 
     var body: some Scene {
         WindowGroup {
-            LockGateView(isEnabled: appLock) {
+            LockGateView(isEnabled: lockEnabled) {
                 RootView()
                     .environmentObject(store)
             }
-            .preferredColorScheme(preferredScheme)
+            .preferredColorScheme(scheme)
         }
     }
 }

@@ -6,7 +6,7 @@ struct CardDetailView: View {
     let cardID: UUID
 
     @State private var showEdit = false
-    @State private var oldBrightness: CGFloat?
+    @State private var originalBrightness: CGFloat?
 
     private var card: LoyaltyCard? {
         store.cards.first(where: { $0.id == cardID })
@@ -14,46 +14,47 @@ struct CardDetailView: View {
 
     var body: some View {
         ZStack {
-            CardlyBackground()
+            AuroraBackground()
 
             if let card {
                 ScrollView {
                     VStack(spacing: 18) {
-                        WalletCardView(card: card)
+                        PrismCardView(card: card)
 
-                        GlassPanel {
+                        LiquidGlass(cornerRadius: 32) {
                             VStack(spacing: 18) {
                                 HStack {
-                                    VStack(alignment: .leading, spacing: 3) {
+                                    VStack(alignment: .leading, spacing: 4) {
                                         Text("Mostra alla cassa")
                                             .font(.title3.bold())
-                                        Text(card.codeKind.rawValue)
+                                        Text(card.codeType.rawValue)
                                             .font(.caption)
                                             .foregroundStyle(.secondary)
                                     }
                                     Spacer()
                                     Image(systemName: "sun.max.fill")
+                                        .font(.title3)
                                         .foregroundStyle(.yellow)
                                 }
 
-                                BarcodeImageView(value: card.number, kind: card.codeKind, height: 190)
-                                    .padding(12)
-                                    .background(.white, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+                                BarcodeImageView(value: card.code, type: card.codeType)
+                                    .padding(14)
+                                    .background(.white, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
 
-                                Text(card.number)
+                                Text(card.code)
                                     .font(.body.monospaced())
                                     .textSelection(.enabled)
                             }
                         }
 
                         if !card.notes.isEmpty {
-                            GlassPanel {
+                            LiquidGlass {
                                 VStack(alignment: .leading, spacing: 8) {
                                     Label("Note", systemImage: "note.text")
                                         .font(.headline)
                                     Text(card.notes)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
                                         .foregroundStyle(.secondary)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                             }
                         }
@@ -62,12 +63,13 @@ struct CardDetailView: View {
                             Button {
                                 store.toggleFavorite(card)
                             } label: {
-                                Label(card.isFavorite ? "Preferita" : "Preferiti",
-                                      systemImage: card.isFavorite ? "star.fill" : "star")
+                                Label(card.favorite ? "Preferita" : "Preferiti",
+                                      systemImage: card.favorite ? "star.fill" : "star")
                                     .frame(maxWidth: .infinity)
                             }
                             .buttonStyle(.borderedProminent)
-                            .tint(.black)
+                            .controlSize(.large)
+                            .tint(LiquidDesign.accent)
 
                             Button {
                                 showEdit = true
@@ -76,6 +78,7 @@ struct CardDetailView: View {
                                     .frame(maxWidth: .infinity)
                             }
                             .buttonStyle(.bordered)
+                            .controlSize(.large)
                         }
 
                         Button(role: .destructive) {
@@ -87,30 +90,30 @@ struct CardDetailView: View {
                         }
                         .buttonStyle(.bordered)
                     }
-                    .padding()
+                    .padding(16)
                 }
                 .sheet(isPresented: $showEdit) {
                     AddEditCardView(card: card)
                 }
-                .onAppear { setBrightness() }
+                .onAppear { maximizeBrightness() }
                 .onDisappear { restoreBrightness() }
             } else {
                 ContentUnavailableView("Tessera non trovata", systemImage: "exclamationmark.triangle")
             }
         }
-        .navigationTitle(card?.name ?? "Tessera")
+        .navigationTitle(card?.title ?? "Tessera")
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    private func setBrightness() {
-        guard oldBrightness == nil else { return }
-        oldBrightness = UIScreen.main.brightness
+    private func maximizeBrightness() {
+        guard originalBrightness == nil else { return }
+        originalBrightness = UIScreen.main.brightness
         UIScreen.main.brightness = 1
     }
 
     private func restoreBrightness() {
-        guard let oldBrightness else { return }
-        UIScreen.main.brightness = oldBrightness
-        self.oldBrightness = nil
+        guard let originalBrightness else { return }
+        UIScreen.main.brightness = originalBrightness
+        self.originalBrightness = nil
     }
 }

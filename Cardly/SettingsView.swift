@@ -2,12 +2,12 @@ import SwiftUI
 
 struct SettingsView: View {
     @AppStorage("appearance") private var appearance = "system"
-    @AppStorage("appLock") private var appLock = false
+    @AppStorage("lockEnabled") private var lockEnabled = false
 
     var body: some View {
         NavigationStack {
             ZStack {
-                CardlyBackground()
+                AuroraBackground()
 
                 Form {
                     Section("Aspetto") {
@@ -19,20 +19,20 @@ struct SettingsView: View {
                     }
 
                     Section("Privacy") {
-                        Toggle(isOn: $appLock) {
+                        Toggle(isOn: $lockEnabled) {
                             Label("Proteggi con Face ID", systemImage: "faceid")
                         }
                     }
 
                     Section("Dati") {
-                        LabeledContent("Salvataggio", value: "Locale sul dispositivo")
+                        LabeledContent("Salvataggio", value: "Sul dispositivo")
                         LabeledContent("Backup iCloud", value: "Prossima build")
                     }
 
-                    Section("Informazioni") {
+                    Section("Cardly") {
                         LabeledContent("Versione", value: "1.0")
-                        LabeledContent("Build", value: "4")
-                        Text("Cardly conserva carte fedeltà e tessere. Non gestisce carte di pagamento.")
+                        LabeledContent("Build", value: "9")
+                        Text("Cardly conserva carte fedeltà e tessere. Non gestisce carte bancarie.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }

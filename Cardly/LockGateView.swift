@@ -4,7 +4,6 @@ import LocalAuthentication
 struct LockGateView<Content: View>: View {
     let isEnabled: Bool
     private let content: Content
-
     @State private var unlocked = false
 
     init(isEnabled: Bool, @ViewBuilder content: () -> Content) {
@@ -18,34 +17,41 @@ struct LockGateView<Content: View>: View {
                 content
             } else {
                 ZStack {
-                    Color(.systemBackground)
-                        .ignoresSafeArea()
+                    AuroraBackground()
 
-                    VStack(spacing: 18) {
-                        Image(systemName: "faceid")
-                            .font(.system(size: 52, weight: .medium))
+                    LiquidGlass(cornerRadius: 36) {
+                        VStack(spacing: 18) {
+                            ZStack {
+                                Circle()
+                                    .fill(LiquidDesign.accent.opacity(0.20))
+                                    .frame(width: 86, height: 86)
+                                Image(systemName: "faceid")
+                                    .font(.system(size: 44, weight: .medium))
+                                    .foregroundStyle(LiquidDesign.accent)
+                            }
 
-                        Text("Cardly")
-                            .font(.title2.bold())
+                            Text("Cardly è protetta")
+                                .font(.title2.bold())
 
-                        Text("Sblocca l’app per accedere alle tue tessere.")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
+                            Text("Usa Face ID per accedere alle tue tessere.")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
 
-                        Button {
-                            authenticate()
-                        } label: {
-                            Label("Sblocca con Face ID", systemImage: "faceid")
+                            Button {
+                                authenticate()
+                            } label: {
+                                Label("Sblocca", systemImage: "faceid")
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .controlSize(.large)
+                            .tint(LiquidDesign.accent)
                         }
-                        .buttonStyle(.borderedProminent)
-                        .tint(.black)
                     }
-                    .padding(30)
+                    .padding(28)
                 }
-                .task {
-                    authenticate()
-                }
+                .task { authenticate() }
             }
         }
     }
@@ -53,13 +59,9 @@ struct LockGateView<Content: View>: View {
     private func authenticate() {
         let context = LAContext()
         context.localizedCancelTitle = "Annulla"
-
         var error: NSError?
 
-        guard context.canEvaluatePolicy(
-            .deviceOwnerAuthenticationWithBiometrics,
-            error: &error
-        ) else {
+        guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) else {
             unlocked = true
             return
         }
@@ -69,9 +71,7 @@ struct LockGateView<Content: View>: View {
             localizedReason: "Sblocca Cardly"
         ) { success, _ in
             DispatchQueue.main.async {
-                if success {
-                    unlocked = true
-                }
+                if success { unlocked = true }
             }
         }
     }

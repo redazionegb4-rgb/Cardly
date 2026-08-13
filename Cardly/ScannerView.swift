@@ -5,9 +5,7 @@ struct ScannerView: UIViewControllerRepresentable {
     @Environment(\.dismiss) private var dismiss
     @Binding var scannedValue: String
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator(parent: self)
-    }
+    func makeCoordinator() -> Coordinator { Coordinator(parent: self) }
 
     func makeUIViewController(context: Context) -> UIViewController {
         guard DataScannerViewController.isSupported,
@@ -16,7 +14,7 @@ struct ScannerView: UIViewControllerRepresentable {
                 ContentUnavailableView(
                     "Scanner non disponibile",
                     systemImage: "camera.fill",
-                    description: Text("Inserisci il numero della tessera manualmente.")
+                    description: Text("Puoi inserire il codice manualmente.")
                 )
             )
         }
@@ -39,10 +37,7 @@ struct ScannerView: UIViewControllerRepresentable {
 
     final class Coordinator: NSObject, DataScannerViewControllerDelegate {
         let parent: ScannerView
-
-        init(parent: ScannerView) {
-            self.parent = parent
-        }
+        init(parent: ScannerView) { self.parent = parent }
 
         func dataScanner(_ dataScanner: DataScannerViewController, didTapOn item: RecognizedItem) {
             guard case .barcode(let barcode) = item,
