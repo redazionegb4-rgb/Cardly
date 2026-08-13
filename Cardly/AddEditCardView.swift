@@ -41,25 +41,48 @@ struct AddEditCardView: View {
 
                     Spacer()
 
-                    HStack(spacing: 12) {
-                        if step > 0 {
-                            Button("Indietro") { withAnimation(.snappy) { step -= 1 } }
-                                .buttonStyle(.bordered)
-                                .controlSize(.large)
-                        }
+HStack(spacing: 14) {
+    if step > 0 {
+        Button {
+            withAnimation(.snappy) {
+                step -= 1
+            }
+        } label: {
+            Text("Indietro")
+                .font(.headline)
+                .frame(maxWidth: .infinity)
+                .frame(height: 52)
+        }
+        .buttonStyle(.bordered)
+        .tint(.primary)
+    } else {
+        Color.clear
+            .frame(maxWidth: .infinity)
+            .frame(height: 52)
+    }
 
-                        Button(step == 2 ? "Salva tessera" : "Continua") {
-                            if step < 2 { withAnimation(.snappy) { step += 1 } }
-                            else { save() }
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .controlSize(.large)
-                        .tint(CardlyUI.accent)
-                        .frame(maxWidth: .infinity)
-                        .disabled(step == 0 && code.isEmpty || step == 1 && title.isEmpty)
-                    }
+    Button {
+        if step < 2 {
+            withAnimation(.snappy) {
+                step += 1
+            }
+        } else {
+            save()
+        }
+    } label: {
+        Text(step == 2 ? "Salva tessera" : "Continua")
+            .font(.headline)
+            .frame(maxWidth: .infinity)
+            .frame(height: 52)
+    }
+    .buttonStyle(.borderedProminent)
+    .tint(CardlyUI.accent)
+    .disabled(step == 0 && code.isEmpty || step == 1 && title.isEmpty)
+}
+.frame(maxWidth: .infinity)
                 }
                 .padding(18)
+                .padding(.bottom, 24)
             }
             .navigationTitle(editingCard == nil ? "Nuova tessera" : "Modifica tessera")
             .navigationBarTitleDisplayMode(.inline)

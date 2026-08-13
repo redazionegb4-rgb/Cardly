@@ -22,7 +22,7 @@ struct SettingsView: View {
                         aboutCard
                     }
                     .padding(18)
-                    .padding(.bottom, 36)
+                    .padding(.bottom, 140)
                 }
                 .scrollIndicators(.hidden)
             }
@@ -79,7 +79,7 @@ struct SettingsView: View {
                 Divider()
                 infoRow("Salvataggio", "iphone", "Sul dispositivo")
                 Divider()
-                infoRow("Versione", "number", "2.0 (13)")
+                infoRow("Versione", "number", "2.0 (14)")
             }
         }
     }

@@ -65,7 +65,7 @@ struct CardDetailView: View {
                         .buttonStyle(.bordered)
                     }
                     .padding(18)
-                    .padding(.bottom, 100)
+                    .padding(.bottom, 140)
                 }
                 .sheet(isPresented: $showEdit) { AddEditCardView(card: card) }
                 .onAppear { oldBrightness = UIScreen.main.brightness; UIScreen.main.brightness = 1 }

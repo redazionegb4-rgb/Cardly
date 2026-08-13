@@ -17,7 +17,7 @@ struct CategoriesView: View {
                         }
                     }
                     .padding(18)
-                    .padding(.bottom, 28)
+                    .padding(.bottom, 140)
                 }
                 .scrollIndicators(.hidden)
             }
@@ -116,7 +116,7 @@ struct CategoryCardsView: View {
                         }
                     }
                     .padding(18)
-                    .padding(.bottom, 28)
+                    .padding(.bottom, 140)
                 }
             }
         }

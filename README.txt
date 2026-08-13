@@ -53,3 +53,11 @@ BUILD 13 PROJECT FIX
 - mantenuta barra a 5 elementi con + centrato
 - mantenuta sezione Categorie
 - mantenuti Cardly Labs
+
+
+BUILD 14
+- Aggiunto spazio inferiore reale a tutte le pagine scrollabili
+- L'ultimo contenuto ora scorre completamente sopra la bottom bar
+- Allineati i pulsanti Indietro / Continua nella creazione tessera
+- Continua ora è correttamente a destra
+- Build aggiornata a 14

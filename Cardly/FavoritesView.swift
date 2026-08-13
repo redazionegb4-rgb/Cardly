@@ -29,7 +29,7 @@ struct FavoritesView: View {
                             }
                         }
                         .padding(18)
-                        .padding(.bottom, 120)
+                        .padding(.bottom, 140)
                     }
                 }
             }
