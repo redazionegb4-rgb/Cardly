@@ -18,7 +18,8 @@ struct LockGateView<Content: View>: View {
                 content
             } else {
                 ZStack {
-                    PageBackground()
+                    Color(.systemBackground)
+                        .ignoresSafeArea()
 
                     VStack(spacing: 18) {
                         Image(systemName: "faceid")

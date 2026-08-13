@@ -1,4 +1,4 @@
-CARDLY — VERSIONE 1.0 / BUILD 6
+CARDLY — VERSIONE 1.0 / BUILD 7
 Bundle Identifier: com.cardlynew.app
 
 REDESIGN COMPLETO
@@ -11,6 +11,10 @@ REDESIGN COMPLETO
 
 Prima dell’Archive: seleziona il tuo Team in Signing & Capabilities.
 
-FIX BUILD 6
+FIX BUILD 7
 - Corretto LockGateView generico
 - Risolti errori TableColumn / Content / Generic parameter
+
+FIX BUILD 7
+- Rimosso riferimento a PageBackground da LockGateView
+- Lock screen ora usa direttamente Color(.systemBackground)
