@@ -1,4 +1,4 @@
-CARDLY — VERSIONE 1.0 / BUILD 5
+CARDLY — VERSIONE 1.0 / BUILD 6
 Bundle Identifier: com.cardlynew.app
 
 REDESIGN COMPLETO
@@ -10,3 +10,7 @@ REDESIGN COMPLETO
 - iPhone only
 
 Prima dell’Archive: seleziona il tuo Team in Signing & Capabilities.
+
+FIX BUILD 6
+- Corretto LockGateView generico
+- Risolti errori TableColumn / Content / Generic parameter
